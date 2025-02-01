@@ -109,3 +109,11 @@ main {
 .feed-title:hover {
   text-decoration: underline;
 }
+
+/* Loading message styling */
+.loading-message {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+  font-style: italic;
+}

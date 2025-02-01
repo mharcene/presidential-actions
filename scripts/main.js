@@ -9,11 +9,30 @@ let currentPage = 1;
 
 function fetchFeedPage(page) {
   const loadMoreBtn = document.getElementById("load-more");
+  const tableBody = document.getElementById("table-body");
+  
   if (loadMoreBtn) {
     loadMoreBtn.disabled = true;
     loadMoreBtn.textContent = "Loading...";
   }
 
+  // Clear error messages when loading new page
+  if (tableBody) {
+    const errorRows = tableBody.querySelectorAll('.error-message');
+    errorRows.forEach(row => row.remove());
+  }
+
+  // Add loading indicator only for first page
+  if (tableBody && page === 1) {
+    tableBody.innerHTML = `
+      <tr>
+        <td colspan="2" class="loading-message">
+          Loading feed...
+        </td>
+      </tr>
+    `;
+  }
+  
   // Build the original feed URL with pagination support.
   let originalFeedUrl = 'https://www.whitehouse.gov/presidential-actions/feed/';
   if (page > 1) {
@@ -22,31 +41,36 @@ function fetchFeedPage(page) {
   
   // Update the proxy URL to point to your Vercel serverless function.
   // Replace "your-project-name" with your actual Vercel project domain.
-  const proxyUrl = 'presidential-actions-cwgxcpufg-mharcenes-projects.vercel.app';
+  const proxyUrl = 'https://presidential-actions-cwgxcpufg-mharcenes-projects.vercel.app/api/cors?url=';
   const feedUrl = proxyUrl + encodeURIComponent(originalFeedUrl);
   
   fetch(feedUrl)
     .then(response => {
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error(`HTTP error! status: ${response.status} - ${response.statusText}`);
       }
       return response.text();
     })
     .then(str => {
+      // Add XML parsing error check
       const parser = new DOMParser();
       const xmlDoc = parser.parseFromString(str, "text/xml");
+      const parseError = xmlDoc.querySelector('parsererror');
+      if (parseError) {
+        throw new Error('Invalid XML feed format');
+      }
       
       const items = xmlDoc.querySelectorAll("item");
       console.log("Fetched page", page, "with", items.length, "items");
       
-      const tableBody = document.getElementById("table-body");
       if (!tableBody) {
         throw new Error("Table body element not found!");
       }
       
       items.forEach(item => {
         const title = item.querySelector("title")?.textContent || "No Title";
-        const pubDate = item.querySelector("pubDate")?.textContent || "No Date";
+        const rawDate = item.querySelector("pubDate")?.textContent;
+        const pubDate = rawDate ? new Date(rawDate).toLocaleDateString() : "No Date";
         const link = item.querySelector("link")?.textContent || "#";
         
         const tr = document.createElement("tr");
@@ -69,12 +93,11 @@ function fetchFeedPage(page) {
     })
     .catch(error => {
       console.error("Error fetching feed:", error);
-      const tableBody = document.getElementById("table-body");
       if (tableBody) {
         const tr = document.createElement("tr");
         tr.innerHTML = `
           <td colspan="2" class="error-message">
-            Error loading feed. Please try again later.
+            Error loading feed: ${error.message}
           </td>
         `;
         tableBody.appendChild(tr);
@@ -101,6 +124,3 @@ document.addEventListener('DOMContentLoaded', function() {
   // Fetch the first page of the feed
   fetchFeedPage(currentPage);
 });
-
-// Remove or comment out the unused functions and variables
-// Removing: loadNextItems(), fetchFeed() call, and unused variables
