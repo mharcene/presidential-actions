@@ -4,24 +4,49 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>My Presidential Actions</title>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+  <!-- Custom CSS -->
   <link rel="stylesheet" href="styles/main.css" />
   <!-- Include D3.js from a CDN -->
   <script src="https://d3js.org/d3.v6.min.js"></script>
 </head>
-<body>
-  <header>
-    <h1>Presidential Actions Overview</h1>
+<body class="bg-light">
+  <header class="bg-dark text-white py-3">
+    <div class="container">
+      <h1 class="text-center">Presidential Actions Overview</h1>
+    </div>
   </header>
   
-  <main>
-    <!-- This div will hold our visualization -->
-    <div id="visualization"></div>
-  </main>
-  
-  <!-- Link to your custom JavaScript -->
-  <script src="scripts/main.js"></script>
+  <main class="container my-4">
+    <!-- Tooltip container -->
+    <div id="tooltip"></div>
 
-  <!-- Tooltip container -->
-<div id="tooltip"></div>
+    <!-- Feed Section -->
+    <section id="feed-section">
+      <h2 class="mb-3">Presidential Actions Feed</h2>
+      <div class="table-responsive">
+        <table id="feed-table" class="table table-striped table-hover">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody id="table-body">
+            <!-- Feed rows will be inserted here -->
+          </tbody>
+        </table>
+      </div>
+      <div id="feed-controls" class="text-center">
+        <button id="load-more" class="btn btn-primary">Load More</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- Bootstrap JS Bundle (includes Popper) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Your custom JS -->
+  <script src="scripts/main.js"></script>
 </body>
 </html>

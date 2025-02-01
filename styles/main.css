@@ -1,38 +1,111 @@
+/* Base Styles */
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f5f5f5;
-  }
-  
-  header {
-    background-color: #333;
-    color: #fff;
-    padding: 1rem;
-    text-align: center;
-  }
-  
-  main {
-    padding: 2rem;
-  }
-  
-  /* Style for the visualization container */
-  #visualization {
-    border: 1px solid #ccc;
-    background-color: #fff;
-    padding: 1rem;
-  }
-  
-  /* Tooltip styling */
+  font-family: Arial, sans-serif;
+  background-color: #f5f5f5;
+  margin: 0;
+  padding: 0;
+}
+
+/* Header */
+header {
+  /* We already use Bootstrap classes for background and text colors */
+}
+
+/* Main container */
+main {
+  padding: 2rem 0;
+}
+
+/* Visualization Styles */
+#visualization {
+  border: 1px solid #ccc;
+  background-color: #fff;
+  padding: 1rem;
+}
+
+/* Tooltip styling */
 #tooltip {
   position: absolute;
   background-color: #fff;
   border: 1px solid #ccc;
   padding: 0.5rem;
-  pointer-events: none; /* Allows mouse events to pass through */
+  pointer-events: none;
   font-size: 0.9rem;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
-  visibility: hidden; /* Start hidden */
+  visibility: hidden;
   transition: opacity 0.2s ease;
   opacity: 0;
+}
+
+/* Feed Section Styles */
+#feed-section {
+  margin-top: 2rem;
+}
+
+/* Feed Table Styles */
+#feed-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 2rem;
+}
+
+#feed-table th,
+#feed-table td {
+  border: 1px solid #ccc;
+  padding: 0.75rem;
+  text-align: left;
+}
+
+#feed-table th {
+  background-color: #f0f0f0;
+}
+
+#feed-table tr:nth-child(even) {
+  background-color: #fafafa;
+}
+
+/* Feed Controls (Load More Button) */
+#feed-controls {
+  text-align: center;
+  margin-top: 1rem;
+}
+
+#feed-controls button {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border: none;
+  background-color: #333;
+  color: #fff;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+#feed-controls button:hover {
+  background-color: #555;
+}
+
+#load-more {
+  padding: 10px 20px;
+}
+
+#load-more:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Error message styling */
+.error-message {
+  color: red;
+  text-align: center;
+  padding: 20px;
+}
+
+/* Style the title link in the feed table */
+.feed-title {
+  color: #007bff; /* Bootstrap primary blue, for example */
+  text-decoration: none;
+}
+.feed-title:hover {
+  text-decoration: underline;
 }

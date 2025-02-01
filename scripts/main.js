@@ -1,54 +1,106 @@
-// Set dimensions for the SVG container
-const width = 800;
-const height = 400;
+let feedItems = [];       // Array to store all feed items
+//let currentItemIndex = 0; // Tracks how many items have been loaded
+//const itemsPerPage = 10;  // Number of items to load per batch
 
-// Select the visualization div and append an SVG element
-const svg = d3.select('#visualization')
-  .append('svg')
-  .attr('width', width)
-  .attr('height', height);
+// --- Feed Pagination Code ---
 
-// Load data from actions.json
-d3.json('data/actions.json').then(function(data) {
-  // Create circles and add event listeners for tooltips
-  svg.selectAll('circle')
-    .data(data)
-    .enter()
-    .append('circle')
-    .attr('cx', (d, i) => (i + 1) * (width / (data.length + 1)))
-    .attr('cy', height / 2)
-    .attr('r', 20)
-    .attr('fill', 'steelblue')
-    .on('mouseover', function(event, d) {
-      // Show tooltip on mouseover
-      d3.select('#tooltip')
-        .style('visibility', 'visible')
-        .style('opacity', 1)
-        .text(`${d.action} (${d.year})`);
+// Global variable to track the current feed page
+let currentPage = 1;
+
+function fetchFeedPage(page) {
+  const loadMoreBtn = document.getElementById("load-more");
+  if (loadMoreBtn) {
+    loadMoreBtn.disabled = true;
+    loadMoreBtn.textContent = "Loading...";
+  }
+
+  // Use Thing Proxy as a CORS proxy
+  const proxyUrl = 'https://thingproxy.freeboard.io/fetch/';
+  let originalFeedUrl = 'https://www.whitehouse.gov/presidential-actions/feed/';
+  
+  if (page > 1) {
+    originalFeedUrl += '?paged=' + page;
+  }
+  
+  const feedUrl = proxyUrl + originalFeedUrl;
+  
+  fetch(feedUrl)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return response.text();
     })
-    .on('mousemove', function(event) {
-      // Move tooltip with the mouse cursor
-      d3.select('#tooltip')
-        .style('top', (event.pageY + 10) + 'px')
-        .style('left', (event.pageX + 10) + 'px');
+    .then(str => {
+      const parser = new DOMParser();
+      const xmlDoc = parser.parseFromString(str, "text/xml");
+      
+      const items = xmlDoc.querySelectorAll("item");
+      console.log("Fetched page", page, "with", items.length, "items");
+      
+      const tableBody = document.getElementById("table-body");
+      if (!tableBody) {
+        throw new Error("Table body element not found!");
+      }
+      
+      items.forEach(item => {
+        const title = item.querySelector("title")?.textContent || "No Title";
+        const pubDate = item.querySelector("pubDate")?.textContent || "No Date";
+        const link = item.querySelector("link")?.textContent || "#";
+        
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td><a href="${link}" target="_blank" class="feed-title">${title}</a></td>
+          <td>${pubDate}</td>
+        `;
+        
+        tableBody.appendChild(tr);
+      });
+      
+      if (items.length < 10) {
+        if (loadMoreBtn) {
+          loadMoreBtn.style.display = "none";
+        }
+        console.log("No more items available; hiding Load More button.");
+      } else if (loadMoreBtn) {
+        loadMoreBtn.disabled = false;
+        loadMoreBtn.textContent = "Load More";
+      }
     })
-    .on('mouseout', function() {
-      // Hide tooltip when the mouse leaves
-      d3.select('#tooltip')
-        .style('visibility', 'hidden')
-        .style('opacity', 0);
+    .catch(error => {
+      console.error("Error fetching feed:", error);
+      const tableBody = document.getElementById("table-body");
+      if (tableBody) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td colspan="3" class="error-message">
+            Error loading feed. Please try again later.
+          </td>
+        `;
+        tableBody.appendChild(tr);
+      }
+      if (loadMoreBtn) {
+        loadMoreBtn.disabled = false;
+        loadMoreBtn.textContent = "Try Again";
+      }
     });
+}
 
-  // Optional: Add labels inside the circles
-  svg.selectAll('text')
-    .data(data)
-    .enter()
-    .append('text')
-    .attr('x', (d, i) => (i + 1) * (width / (data.length + 1)))
-    .attr('y', height / 2 + 5)
-    .attr('text-anchor', 'middle')
-    .attr('fill', 'white')
-    .text(d => d.action);
-}).catch(function(error) {
-  console.error("Error loading data:", error);
+function loadMore() {
+  currentPage++;
+  fetchFeedPage(currentPage);
+}
+
+// Wait for DOM to be fully loaded before attaching events
+document.addEventListener('DOMContentLoaded', function() {
+  const loadMoreBtn = document.getElementById("load-more");
+  if (loadMoreBtn) {
+    loadMoreBtn.addEventListener("click", loadMore);
+  }
+
+  // Fetch the first page of the feed
+  fetchFeedPage(currentPage);
 });
+
+// Remove or comment out the unused functions and variables
+// Removing: loadNextItems(), fetchFeed() call, and unused variables
