@@ -23,3 +23,16 @@ body {
     padding: 1rem;
   }
   
+  /* Tooltip styling */
+#tooltip {
+  position: absolute;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  padding: 0.5rem;
+  pointer-events: none; /* Allows mouse events to pass through */
+  font-size: 0.9rem;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+  visibility: hidden; /* Start hidden */
+  transition: opacity 0.2s ease;
+  opacity: 0;
+}
