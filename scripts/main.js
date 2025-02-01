@@ -34,7 +34,7 @@ function fetchFeedPage(page) {
   }
   
   // Build the original feed URL with pagination support.
-  let originalFeedUrl = 'https://www.whitehouse.gov/presidential-actions/feed/';
+  let originalFeedUrl = 'https://www.whitehouse.gov/feed/';  // Try the main feed instead
   if (page > 1) {
     originalFeedUrl += '?paged=' + page;
   }
