@@ -14,15 +14,16 @@ function fetchFeedPage(page) {
     loadMoreBtn.textContent = "Loading...";
   }
 
-  // Use Thing Proxy as a CORS proxy
-  const proxyUrl = 'https://thingproxy.freeboard.io/fetch/';
+  // Build the original feed URL with pagination support.
   let originalFeedUrl = 'https://www.whitehouse.gov/presidential-actions/feed/';
-  
   if (page > 1) {
     originalFeedUrl += '?paged=' + page;
   }
   
-  const feedUrl = proxyUrl + originalFeedUrl;
+  // Update the proxy URL to point to your Vercel serverless function.
+  // Replace "your-project-name" with your actual Vercel project domain.
+  const proxyUrl = 'presidential-actions-cwgxcpufg-mharcenes-projects.vercel.app';
+  const feedUrl = proxyUrl + encodeURIComponent(originalFeedUrl);
   
   fetch(feedUrl)
     .then(response => {
@@ -53,7 +54,6 @@ function fetchFeedPage(page) {
           <td><a href="${link}" target="_blank" class="feed-title">${title}</a></td>
           <td>${pubDate}</td>
         `;
-        
         tableBody.appendChild(tr);
       });
       
@@ -73,7 +73,7 @@ function fetchFeedPage(page) {
       if (tableBody) {
         const tr = document.createElement("tr");
         tr.innerHTML = `
-          <td colspan="3" class="error-message">
+          <td colspan="2" class="error-message">
             Error loading feed. Please try again later.
           </td>
         `;
