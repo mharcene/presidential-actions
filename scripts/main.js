@@ -40,8 +40,7 @@ function fetchFeedPage(page) {
   }
   
   // Update the proxy URL to point to your Vercel serverless function.
-  // Replace "your-project-name" with your actual Vercel project domain.
-  const proxyUrl = 'https://presidential-actions-p6oak3ivv-mharcenes-projects.vercel.app';
+  const proxyUrl = 'https://presidential-actions-p6oak3ivv-mharcenes-projects.vercel.app/api/cors?url=';
   const feedUrl = proxyUrl + encodeURIComponent(originalFeedUrl);
   
   fetch(feedUrl)
