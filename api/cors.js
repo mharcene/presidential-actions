@@ -12,13 +12,24 @@ export default async function handler(req, res) {
 
     console.log('Attempting to fetch:', url);
 
-    // Add headers to make the request look like a regular browser request
+    // Add more comprehensive headers
     const response = await fetch(url, {
+      method: 'GET',
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-        'Accept': 'application/rss+xml,application/xml;q=0.9',
-        'Accept-Language': 'en-US,en;q=0.5',
-      }
+        'Accept': '*/*',
+        'Accept-Language': 'en-US,en;q=0.9',
+        'Cache-Control': 'no-cache',
+        'Pragma': 'no-cache',
+        'Referer': 'https://www.whitehouse.gov/',
+        'Origin': 'https://www.whitehouse.gov',
+        'DNT': '1',
+        'Connection': 'keep-alive',
+        'Sec-Fetch-Dest': 'empty',
+        'Sec-Fetch-Mode': 'cors',
+        'Sec-Fetch-Site': 'same-origin'
+      },
+      redirect: 'follow'
     });
 
     console.log('Response status:', response.status);

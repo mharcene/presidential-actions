@@ -34,9 +34,11 @@ function fetchFeedPage(page) {
   }
   
   // Build the original feed URL with pagination support.
-  let originalFeedUrl = 'https://www.whitehouse.gov/feed/';  // Try the main feed instead
+  let originalFeedUrl = 'https://www.whitehouse.gov/wp-json/wp/v2/presidential-actions';
   if (page > 1) {
-    originalFeedUrl += '?paged=' + page;
+    originalFeedUrl += `?page=${page}&per_page=10`;
+  } else {
+    originalFeedUrl += '?per_page=10';
   }
   
   // Update the proxy URL to point to your Vercel serverless function.
